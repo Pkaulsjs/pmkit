@@ -11,6 +11,7 @@ and paper-trading tools on Polymarket's public APIs.
 | `pmkit.clob` | Order-book depth, best bid/ask, midpoint prices |
 | `pmkit.arb` | Binary YES+NO spread scanner + negative-risk event scanner with book-depth validation |
 | `pmkit.paper` | Paper-trading ledger engine (no keys, no funds, pure simulation) |
+| `pmkit.stream` | Zero-dependency WebSocket streaming of live order-book events |
 | `pmkit.config` | Typed configuration with safe defaults |
 
 ## Honest positioning
@@ -41,6 +42,17 @@ python -m pmkit scan --pages 10              # arb scan (binary + negRisk)
 python -m pmkit markets --min-volume 50000   # browse liquid markets
 python -m pmkit watch --token <id> --interval 5   # poll a book to CSV
 ```
+
+## Live streaming (no dependencies)
+
+```python
+from pmkit.stream import stream_market
+
+stream_market(["<token_id>"], print, duration=60)  # prints live book events
+```
+
+A minimal RFC 6455 client implemented on raw sockets - no `websockets`,
+no `aiohttp`, nothing to install.
 
 ## Install
 
