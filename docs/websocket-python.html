@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Polymarket WebSocket in Python - Live Order Book Events, No Dependencies</title>
+<meta name="description" content="Stream live Polymarket order-book events with Python over WebSocket. Zero dependencies: a minimal RFC 6455 client on raw sockets, plus the market channel subscription format.">
+<link rel="canonical" href="https://pkaulsjs.github.io/pmkit/websocket-python.html"></head>
+<body style="font-family:-apple-system,Segoe UI,sans-serif;max-width:760px;margin:2rem auto;padding:0 1.25rem;line-height:1.65">
+<h1>Polymarket WebSocket Streaming in Python</h1>
+<p>REST polling misses fast book changes. Polymarket streams market events over WebSocket at <code>wss://ws-subscriptions-clob.polymarket.com/ws/market</code>.</p>
+<h2>The subscription</h2>
+<p>After the handshake, send a masked text frame:</p>
+<pre>{"assets_ids": ["&lt;token_id_1&gt;", "&lt;token_id_2&gt;"], "type": "market"}</pre>
+<p>You then receive JSON events: <code>book</code> snapshots and <code>price_change</code> updates with timestamps.</p>
+<h2>Gotchas that cost us an afternoon</h2>
+<ul>
+<li><strong>Client frames must be masked</strong> - sending raw JSON without RFC 6455 framing gets you a close frame: <em>"bad MASK"</em></li>
+<li><strong>Idle sockets raise timeouts</strong> - treat them as normal, keep reading; only a close frame (opcode 0x8) ends the stream</li>
+<li><strong>Servers ping, you pong</strong> - reply to opcode 0x9 or the connection dies silently</li>
+</ul>
+<h2>Zero-dependency client</h2>
+<p><a href="https://github.com/Pkaulsjs/pmkit/blob/main/src/pmkit/stream.py">pmkit's stream.py</a> implements the handshake, frame decoding, masking, and ping/pong on raw sockets - about 150 lines, no packages. Use it or read it to write your own.</p>
+<pre>from pmkit.stream import stream_market
+
+stream_market(["&lt;token_id&gt;"], print, duration=60)</pre>
+<p><a href="clob-orderbook-python.html">&larr; CLOB order books</a> | <a href="index.html">pmkit home</a></p>
+</body></html>
