@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Polymarket Gamma API Python Tutorial - Markets & Events</title>
+<meta name="description" content="Query the Polymarket Gamma API with Python: list active markets, parse outcome prices and clobTokenIds, paginate events. Working code, no dependencies.">
+<link rel="canonical" href="https://pkaulsjs.github.io/pmkit/gamma-api-python.html"></head>
+<body style="font-family:-apple-system,Segoe UI,sans-serif;max-width:760px;margin:2rem auto;padding:0 1.25rem;line-height:1.65">
+<h1>Polymarket Gamma API with Python</h1>
+<p>The <a href="https://gamma-api.polymarket.com/markets?limit=5">Gamma API</a> is Polymarket public catalog: every market, its outcomes, prices, volumes. No key required.</p>
+<h2>List active binary markets</h2>
+<pre>import json, urllib.request
+
+url = "https://gamma-api.polymarket.com/markets?active=true&amp;closed=false&amp;limit=100"
+req = urllib.request.Request(url, headers={"User-Agent": "demo"})
+data = json.loads(urllib.request.urlopen(req, timeout=30).read())
+
+for m in data:
+    prices = json.loads(m.get("outcomePrices") or "[]")
+    if len(prices) == 2:
+        print(m["question"][:60], prices)</pre>
+<h2>Paginate correctly</h2>
+<p>Past the last page the API returns <strong>HTTP 422</strong> - not an empty list. Catch it:</p>
+<pre>import urllib.error
+
+def get_page(offset):
+    url = f"https://gamma-api.polymarket.com/markets?limit=100&amp;offset={offset}"
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "demo"})
+        return json.loads(urllib.request.urlopen(req, timeout=30).read())
+    except urllib.error.HTTPError as e:
+        if e.code == 422:
+            return []
+        raise</pre>
+<h2>Fields that matter</h2>
+<ul>
+<li><code>outcomePrices</code>, <code>outcomes</code>, <code>clobTokenIds</code> are JSON-encoded <em>strings</em> - double-decode them</li>
+<li><code>negRisk</code> marks sub-markets of a mutually-exclusive event group</li>
+<li><code>volume24hr</code>, <code>liquidityNum</code> for filtering tradeable markets</li>
+<li>Gamma prices are <strong>midpoints, not executable bids</strong> - verify against the <a href="clob-orderbook-python.html">CLOB order book</a></li>
+</ul>
+<p>Full client code in <a href="https://github.com/Pkaulsjs/pmkit">pmkit</a>.</p>
+<p><a href="index.html">&larr; pmkit home</a> | <a href="clob-orderbook-python.html">Next: CLOB order books &rarr;</a></p>
+</body></html>

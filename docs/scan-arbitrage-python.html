@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How to Scan Polymarket for Arbitrage with Python (2026 field data)</title>
+<meta name="description" content="Scan Polymarket for YES+NO spreads and negative-risk deviations with Python. Live 2026 case study: 2,100 markets scanned, what survived book validation, why most arbs are phantom.">
+<link rel="canonical" href="https://pkaulsjs.github.io/pmkit/scan-arbitrage-python.html"></head>
+<body style="font-family:-apple-system,Segoe UI,sans-serif;max-width:760px;margin:2rem auto;padding:0 1.25rem;line-height:1.65">
+<h1>Scanning Polymarket for Arbitrage: What Actually Works</h1>
+<p><em>Field data: August 2026, 2,100+ binary markets and 3,000+ events scanned.</em></p>
+<h2>The two scans</h2>
+<p><strong>Binary:</strong> flag markets where YES + NO is below 1 minus fees. Buy both sides, collect $1 at resolution.</p>
+<p><strong>Negative risk:</strong> in a mutually-exclusive event with N sub-markets, if the sum of YES prices exceeds 1, selling NO across all sub-markets nets sum minus 1.</p>
+<h2>Results from a live scan</h2>
+<ul>
+<li>Binary: <strong>0</strong> spreads of 0.5 percent or more in 2,100 markets</li>
+<li>NegRisk: <strong>61</strong> midpoint deviations over 2 percent - and after order-book validation, effectively <strong>0</strong> executable</li>
+</ul>
+<h2>Why they were phantom</h2>
+<ul><li>Resolved events with never-cancelled resting orders (zombie books)</li>
+<li>Best bids 3 shares deep - one market order eats it</li>
+<li>Stale midpoints on markets with no recent trades</li></ul>
+<h2>The takeaway</h2>
+<p>Polymarket long tail is bot-saturated. Scanners are still useful - as market-quality maps, not money printers. Full working scanners: <a href="https://github.com/Pkaulsjs/pmkit">pmkit</a>.</p>
+<p><a href="clob-orderbook-python.html">&larr; CLOB order books</a> | <a href="index.html">pmkit home</a></p>
+</body></html>
