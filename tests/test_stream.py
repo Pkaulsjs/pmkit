@@ -19,8 +19,9 @@ class TestFrameCodec(unittest.TestCase):
         b1, b2 = hdr[0], hdr[1]
         ln = b2 & 0x7F
         if ln == 126:
-            ext = b.recv(2)
-            ln = struct.unpack(">H", ext)[0]
+            ln = struct.unpack(">H", b.recv(2))[0]
+        elif ln == 127:
+            ln = struct.unpack(">Q", b.recv(8))[0]
         mask = b.recv(4)
         payload = b""
         while len(payload) < ln:
