@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Paper Trading Prediction Markets - Test Strategies Without Funds</title>
+<meta name="description" content="How to paper-trade Polymarket strategies with Python: simulate fills at live book prices, track positions and equity, validate ideas before risking capital.">
+<link rel="canonical" href="https://pkaulsjs.github.io/pmkit/paper-trading-guide.html"></head>
+<body style="font-family:-apple-system,Segoe UI,sans-serif;max-width:760px;margin:2rem auto;padding:0 1.25rem;line-height:1.65">
+<h1>Paper-Trading Prediction Markets</h1>
+<p>Before any strategy touches capital, it should survive simulation. Paper trading against <em>live order books</em> (not historical candles) is the closest thing to real execution without funds.</p>
+<h2>The minimal loop</h2>
+<pre>from pmkit.paper import PaperLedger
+from pmkit.clob import best_ask
+
+ledger = PaperLedger(starting_cash=1000.0)
+token = "your_token_id"
+
+ba, size = best_ask(token)
+if ledger.buy(token, shares=10, price=ba):
+    print("filled", ledger.equity())</pre>
+<h2>What simulation cannot show you</h2>
+<ul>
+<li><strong>Your own market impact</strong> - simulated fills assume the book absorbs you</li>
+<li><strong>Latency</strong> - by the time your order lands, the price moved</li>
+<li><strong>Resolution disputes</strong> - UMA outcomes can surprise</li>
+</ul>
+<p>Discount accordingly: if a strategy barely profits on paper, it loses live.</p>
+<h2>A practical rule</h2>
+<p>Run 100+ simulated fills across different market conditions before considering real stake. pmkit includes a tested ledger engine for exactly this.</p>
+<p><a href="https://github.com/Pkaulsjs/pmkit">pmkit on GitHub</a> | <a href="index.html">home</a></p>
+</body></html>

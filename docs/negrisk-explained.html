@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Polymarket NegRisk Explained - Mutually Exclusive Markets and Arbitrage Math</title>
+<meta name="description" content="How Polymarket negative-risk markets work: mutually exclusive outcome groups, why YES prices should sum to 1, and the arbitrage math when they do not. Python examples included.">
+<link rel="canonical" href="https://pkaulsjs.github.io/pmkit/negrisk-explained.html"></head>
+<body style="font-family:-apple-system,Segoe UI,sans-serif;max-width:760px;margin:2rem auto;padding:0 1.25rem;line-height:1.65">
+<h1>Polymarket NegRisk, Explained</h1>
+<p>Some Polymarket events have N mutually exclusive outcomes (elections, brackets, score lines). Each sub-market trades YES/NO independently, but the group shares one constraint: <strong>exactly one outcome resolves YES</strong>.</p>
+<h2>The constraint</h2>
+<p>If exactly one of N outcomes resolves YES, rational pricing means the YES prices sum to 1.00. The <code>negRisk</code> flag on Gamma markets marks these groups.</p>
+<h2>The arbitrage math</h2>
+<p>Let S = sum of YES prices across the group.</p>
+<ul><li><strong>S &gt; 1:</strong> buy NO on every sub-market. Cost = N - S. Exactly one NO fails, the rest pay (N-1). Profit = S - 1.</li>
+<li><strong>S &lt; 1:</strong> buy YES on every sub-market for S total; one pays 1. Profit = 1 - S.</li></ul>
+<h2>Why you will rarely capture it</h2>
+<p>Live data from August 2026: a full scan found 61 groups deviating over 2 percent - and after order-book depth checks, essentially zero were executable at meaningful size. Resting orders on resolved events, 3-share bids, stale midpoints. The bots get there first; the books that look wrong are usually just dead.</p>
+<p>Scanner code: <a href="https://github.com/Pkaulsjs/pmkit">pmkit</a>. Depth validation: <a href="clob-orderbook-python.html">CLOB guide</a>.</p>
+<p><a href="scan-arbitrage-python.html">&larr; Arb scanning</a> | <a href="index.html">pmkit home</a></p>
+</body></html>
