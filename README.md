@@ -38,6 +38,26 @@ events = scan_negrisk_events(max_pages=30, buffer=0.02)
 
 ## CLI
 
+Example - live liquid markets at publish time:
+
+```json
+[
+ {
+  "q": "Will Graham Platner win the 2028 Democratic presidential nomination?",
+  "vol24h": 221377,
+  "prices": [
+   0.002,
+   0.999
+  ]
+ },
+ {
+  "q": "Will Abigail Spanberger win the 2028 Democratic presidential nominatio",
+  "vol24h": 274095,
+  "prices": [
+   0.002,
+```
+
+
 ```bash
 python -m pmkit scan --pages 10              # arb scan (binary + negRisk)
 python -m pmkit markets --min-volume 50000   # browse liquid markets
