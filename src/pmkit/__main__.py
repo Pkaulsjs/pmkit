@@ -20,6 +20,9 @@ def main():
     p_mk.add_argument("--min-volume", type=float, default=1000.0)
     p_mk.add_argument("--limit", type=int, default=15)
     p_mk.add_argument("--q", default=None, help="substring filter on question")
+    p_st = sub.add_parser("stream", help="stream live book events")
+    p_st.add_argument("--token", required=True)
+    p_st.add_argument("--duration", type=float, default=60.0)
     args = ap.parse_args()
 
     if args.cmd == "scan":
@@ -28,6 +31,15 @@ def main():
         print(json.dumps({"binary_arbs": len(arbs), "results": arbs[:5]}, indent=1))
         evs = scan_negrisk_events(max_pages=max(args.pages * 3, 30), buffer=args.negrisk_buffer)
         print(json.dumps({"negrisk_deviations": len(evs), "top": evs[:5]}, indent=1))
+        return 0
+
+    if args.cmd == "stream":
+        from pmkit.stream import stream_market
+        n = [0]
+        def count(m):
+            n[0] += 1
+        stream_market([args.token], count, duration=args.duration)
+        print(f"received {n[0]} events")
         return 0
 
     if args.cmd == "markets":
