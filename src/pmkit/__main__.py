@@ -16,6 +16,10 @@ def main():
     p_watch.add_argument("--out", default="watch.csv")
     p_watch.add_argument("--interval", type=float, default=5.0)
     p_watch.add_argument("--duration", type=float, default=60.0)
+    p_mk = sub.add_parser("markets", help="browse active markets")
+    p_mk.add_argument("--min-volume", type=float, default=1000.0)
+    p_mk.add_argument("--limit", type=int, default=15)
+    p_mk.add_argument("--q", default=None, help="substring filter on question")
     args = ap.parse_args()
 
     if args.cmd == "scan":
@@ -24,6 +28,29 @@ def main():
         print(json.dumps({"binary_arbs": len(arbs), "results": arbs[:5]}, indent=1))
         evs = scan_negrisk_events(max_pages=max(args.pages * 3, 30), buffer=args.negrisk_buffer)
         print(json.dumps({"negrisk_deviations": len(evs), "top": evs[:5]}, indent=1))
+        return 0
+
+    if args.cmd == "markets":
+        from pmkit.gamma import iter_markets
+        rows = []
+        for m in iter_markets(max_pages=10):
+            try:
+                vol = float(m.get("volume24hr") or 0)
+            except Exception:
+                continue
+            if vol < args.min_volume:
+                continue
+            q = m.get("question") or ""
+            if args.q and args.q.lower() not in q.lower():
+                continue
+            try:
+                prices = [round(float(x), 3) for x in json.loads(m.get("outcomePrices") or "[]")]
+            except Exception:
+                prices = []
+            rows.append({"q": q[:70], "vol24h": round(vol), "prices": prices})
+            if len(rows) >= args.limit:
+                break
+        print(json.dumps(rows, indent=1))
         return 0
 
     if args.cmd == "watch":

@@ -34,6 +34,14 @@ for a in arbs:
 events = scan_negrisk_events(max_pages=30, buffer=0.02)
 ```
 
+## CLI
+
+```bash
+python -m pmkit scan --pages 10              # arb scan (binary + negRisk)
+python -m pmkit markets --min-volume 50000   # browse liquid markets
+python -m pmkit watch --token <id> --interval 5   # poll a book to CSV
+```
+
 ## Install
 
 ```bash
