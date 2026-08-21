@@ -1,5 +1,7 @@
 # pmkit - Polymarket Dev Kit
 
+[![CI](https://github.com/Pkaulsjs/pmkit/actions/workflows/ci.yml/badge.svg)](https://github.com/Pkaulsjs/pmkit/actions/workflows/ci.yml)
+
 A clean, documented Python toolkit for building read-only market analysis
 and paper-trading tools on Polymarket's public APIs.
 
