@@ -12,6 +12,7 @@ and paper-trading tools on Polymarket's public APIs.
 | `pmkit.arb` | Binary YES+NO spread scanner + negative-risk event scanner with book-depth validation |
 | `pmkit.paper` | Paper-trading ledger engine (no keys, no funds, pure simulation) |
 | `pmkit.stream` | Zero-dependency WebSocket streaming of live order-book events |
+| `pmkit.whales` | Whale-watcher: surface large trades via the public data API |
 | `pmkit.config` | Typed configuration with safe defaults |
 
 ## Honest positioning

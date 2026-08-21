@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Polymarket Whale Tracker in Python - Follow Large Trades via the Data API</title>
+<meta name="description" content="Track whale trades on Polymarket with Python: poll the public data API for recent trades, filter by USD size, watch for large positions in real time. Stdlib-only code.">
+<link rel="canonical" href="https://pkaulsjs.github.io/pmkit/whale-tracker-python.html"></head>
+<body style="font-family:-apple-system,Segoe UI,sans-serif;max-width:760px;margin:2rem auto;padding:0 1.25rem;line-height:1.65">
+<h1>Tracking Polymarket Whales in Python</h1>
+<p>Large traders move thin prediction markets. Polymarket's public data API exposes recent trades without authentication:</p>
+<pre>import json, urllib.request
+
+url = "https://data-api.polymarket.com/trades?limit=100"
+trades = json.loads(urllib.request.urlopen(url, timeout=30).read())
+
+for t in trades:
+    usd = float(t.get("size", 0)) * float(t.get("price", 0))
+    if usd &gt;= 1000:
+        print(t.get("proxyWallet", "")[:10], t.get("outcome"), t.get("price"), round(usd))</pre>
+<h2>Caveats from live use</h2>
+<ul>
+<li>The default window is the last ~100 trades across all markets - whales are sparse there; poll continuously or filter by market</li>
+<li><code>proxyWallet</code> is a pseudonymous address, not a username - tracking an entity means tracking its addresses over time</li>
+<li>Big prints are often hedges, not conviction - whale-following is a signal, not a strategy</li>
+</ul>
+<p>Ready-made: <a href="https://github.com/Pkaulsjs/pmkit">pmkit</a> ships a <code>whales</code> module with a polling watcher.</p>
+<p><a href="websocket-python.html">&larr; WebSocket streaming</a> | <a href="index.html">pmkit home</a></p>
+</body></html>
