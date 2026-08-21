@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Polymarket Trading Bots in 2026: What's Real, What's a Scam, What's Worth Building</title>
+<meta name="description" content="A field survey of Polymarket trading bots in 2026: key-stealing scams, free open-source bots, and commercial toolkits - what each can and cannot do, from live market data.">
+<link rel="canonical" href="https://pkaulsjs.github.io/pmkit/bots-2026.html"></head>
+<body style="font-family:-apple-system,Segoe UI,sans-serif;max-width:760px;margin:2rem auto;padding:0 1.25rem;line-height:1.65">
+<h1>Polymarket Bots in 2026: A Field Survey</h1>
+<p><em>Written from live scanning data, August 2026. Disclosure: we build pmkit, listed below.</em></p>
+<h2>1. The scams (common, dangerous)</h2>
+<p>Downloadable "profitable bots" that ask for your private key. Polymarket trading never requires handing anyone your key. Repos with fake star counts, "guaranteed APY", and bilingual marketing funnels are the pattern. The API supports read-only analysis with zero keys - any tool demanding keys on day one is the product's actual purpose.</p>
+<h2>2. Free open-source bots (real, mixed quality)</h2>
+<p>Several maintained repos do ladder-both-sides strategies on 5-minute crypto markets, merge matched pairs back to USDC, and redeem winners. Quality varies wildly; most ship no tests, no docs, and no safety defaults. Read before you run.</p>
+<h2>3. Analysis toolkits (the useful middle)</h2>
+<p>Market data clients, scanners, paper ledgers, streaming. This is where honest tooling lives because the value is infrastructure, not promises. <a href="https://github.com/Pkaulsjs/pmkit">pmkit</a> is ours: stdlib-only, tested, read-only by design, with a <a href="https://prithish24.gumroad.com/l/fpwms">commercial-license Pro tier</a>.</p>
+<h2>What the live data says about "arb bots"</h2>
+<p>We scanned 2,100 binary markets and 62 negative-risk groups in one day: <strong>zero executable arbitrage</strong> survived order-book depth checks. Phantom bids on zombie markets and 3-share depth accounted for every "opportunity". Anyone selling you an arb bot is selling the phantom. Details: <a href="scan-arbitrage-python.html">the full scan writeup</a>.</p>
+<h2>What can still make money</h2>
+<p>Directional models with real edge (hard, measurable, perishable), market-making on thin markets (requires inventory risk management), and speed on resolution races. All are trading, not printing. Size accordingly.</p>
+<p><a href="index.html">pmkit home</a></p>
+</body></html>
