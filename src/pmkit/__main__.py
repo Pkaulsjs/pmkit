@@ -23,6 +23,10 @@ def main():
     p_st = sub.add_parser("stream", help="stream live book events")
     p_st.add_argument("--token", required=True)
     p_st.add_argument("--duration", type=float, default=60.0)
+    p_ev = sub.add_parser("events", help="negRisk events with deviation sums")
+    p_ev.add_argument("--buffer", type=float, default=0.02)
+    p_ev.add_argument("--pages", type=int, default=30)
+    p_ev.add_argument("--limit", type=int, default=10)
     args = ap.parse_args()
 
     if args.cmd == "scan":
@@ -31,6 +35,13 @@ def main():
         print(json.dumps({"binary_arbs": len(arbs), "results": arbs[:5]}, indent=1))
         evs = scan_negrisk_events(max_pages=max(args.pages * 3, 30), buffer=args.negrisk_buffer)
         print(json.dumps({"negrisk_deviations": len(evs), "top": evs[:5]}, indent=1))
+        return 0
+
+    if args.cmd == "events":
+        from pmkit.arb import scan_negrisk_events
+        evs = scan_negrisk_events(max_pages=args.pages, buffer=args.buffer)
+        evs.sort(key=lambda x: -(x["sum_pyes"] - 1))
+        print(json.dumps(evs[:args.limit], indent=1))
         return 0
 
     if args.cmd == "stream":
