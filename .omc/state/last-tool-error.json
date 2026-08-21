@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd \\\"/c/Users/prith/Desktop/agenta/pmkit\\\" && git add -A && git -c user.name=\\\"Pkaulsjs\\\" -c user.email=\\\"Pkaulsjs@users.noreply.github.com\\\" commit -q -m \\\"feat: CLI entry point (python -...",
+  "error": "Exit code 143\nCommand timed out after 1m 30s\nwarning: in the working copy of 'src/pmkit/__main__.py', LF will be replaced by CRLF the next time Git touches it",
+  "timestamp": "2026-08-21T11:14:35.455Z",
+  "retry_count": 1
+}
