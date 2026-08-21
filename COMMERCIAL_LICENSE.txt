@@ -1,0 +1,7 @@
+PMKIT PRO - COMMERCIAL LICENSE
+Thank you for purchasing pmkit Pro.
+You may use, modify, and deploy this software in personal and commercial
+projects, including trading systems. Redistribution or resale of the source
+code itself is not permitted.
+NO WARRANTY. No profitability claims are made or implied. Trading prediction
+markets involves substantial risk of loss.

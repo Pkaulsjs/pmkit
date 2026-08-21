@@ -1,5 +1,6 @@
 """Live book watcher: poll a token's book and log to CSV."""
 import csv
+import os
 import time
 
 from pmkit.clob import get_book
@@ -32,6 +33,9 @@ def watch(token_id, out_csv="watch.csv", interval=5.0, duration=60.0, quiet=True
         except Exception as e:
             rows.append([round(time.time(), 1), "ERR", str(e)[:40], "", "", None])
         time.sleep(interval)
+    parent = os.path.dirname(os.path.abspath(out_csv))
+    if parent:
+        os.makedirs(parent, exist_ok=True)
     with open(out_csv, "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["ts", "best_bid", "bid_size", "best_ask", "ask_size", "mid"])
