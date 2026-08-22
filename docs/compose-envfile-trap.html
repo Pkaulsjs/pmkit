@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Docker Compose env_file Is Read at Parse Time - The First-Boot Secrets Trap</title>
+<meta name="description" content="Why docker compose reads env_file before your init containers run - and the three workarounds when first-boot-generated secrets never reach runtime containers. Found the hard way shipping an app store package.">
+<link rel="canonical" href="https://pkaulsjs.github.io/pmkit/compose-envfile-trap.html"></head>
+<body style="font-family:-apple-system,Segoe UI,sans-serif;max-width:760px;margin:2rem auto;padding:0 1.25rem;line-height:1.65">
+<h1>The <code>env_file</code> Parse-Time Trap</h1>
+<p><em>Found while shipping a Mastodon package to an app store; it survived local testing, passed CI, and would have broken every production install.</em></p>
+<h2>The pattern that fails</h2>
+<pre>services:
+  init:                      # one-shot: generates secrets
+    command: generate-secrets --out /data/secrets.env
+    volumes: [secrets:/secrets]
+  web:
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    env_file:                # reads secrets generated above?
+      - /data/secrets.env    # NO.</pre>
+<p>It looks right: web starts after init completes. But <strong>compose resolves every service config - including env_file contents - at invocation start</strong>, not when each container is created. On first boot the file is empty or missing, so runtime containers get blank secrets forever. Local testing hides this because you usually re-run compose after the file already exists.</p>
+<h2>Three ways out</h2>
+<ol>
+<li><strong>Generate before compose runs</strong> - pre-start hooks or entry scripts write the file; compose parses after. Cleanest if your platform supports lifecycle hooks.</li>
+<li><strong>All secrets from environment sourcing</strong> - deterministic derivation at env-load time (e.g., HMAC of a device seed per purpose), injected into compose interpolation. No files at all. Our choice where supported.</li>
+<li><strong>Runtime self-configuration</strong> - containers read a mounted file themselves at boot and wait/reload. Works but adds wait-loop complexity to every service.</li>
+</ol>
+<h2>How to catch it</h2>
+<p>Clean-room test protocol: delete ALL state including the secrets file, run the exact install flow a fresh user sees, then assert the values landed in the runtime container (<code>docker exec &lt;svc&gt; printenv KEY</code>). If you only test restarts, you test the wrong boot.</p>
+<p>Related: <a href="loopback-api-security.html">LoopBack security checklist</a> - also written from live recon.</p>
+<p><a href="index.html">pmkit home</a></p>
+</body></html>
