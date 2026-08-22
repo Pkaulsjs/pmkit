@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LoopBack API Security Checklist - ACLs, Filter Injection, IDOR</title>
+<meta name="description" content="Security checklist for LoopBack REST APIs: model ACL hardening, filter[where] injection risks, IDOR patterns in findOne endpoints, guest-token privilege scoping. Written from live bug-bounty recon.">
+<link rel="canonical" href="https://pkaulsjs.github.io/pmkit/loopback-api-security.html"></head>
+<body style="font-family:-apple-system,Segoe UI,sans-serif;max-width:760px;margin:2rem auto;padding:0 1.25rem;line-height:1.65">
+<h1>LoopBack API Security Checklist</h1>
+<p><em>Written during live bug-bounty recon on a production fintech API (August 2026).</em></p>
+<p>LoopBack's REST interface is powerful and equally dangerous when model ACLs are loose. A security review should walk this list before trusting any LoopBack backend.</p>
+<h2>The probes, in order</h2>
+<ol>
+<li><strong>Unauthenticated model access.</strong> For every model: <code>GET /api/&lt;model&gt;?filter[limit]=1</code> with no token. A 200 here means missing ACLs - critical finding. A mature API returns 401 everywhere.</li>
+<li><strong>Filter-injection IDOR.</strong> With any valid token: <code>?filter[where][id][neq]=&lt;my-id&gt;</code>. If ownership filters are client-supplied, <code>[neq]</code>, <code>[inq]</code> and friends read other tenants' rows.</li>
+<li><strong>findOne abuse.</strong> <code>/&lt;model&gt;/findOne?filter[where][...]</code> bypasses list pagination rules; test every where-clause key for cross-tenant reads.</li>
+<li><strong>Guest-token scoping.</strong> Apps that mint sessions pre-authentication must scope those tokens to zero sensitive models. Probe every endpoint with the guest token alone.</li>
+<li><strong>Remote-method exposure.</strong> Custom methods (<code>/&lt;model&gt;/&lt;method&gt;</code>) often skip ACLs that the CRUD routes have. Enumerate them from the client bundle.</li>
+</ol>
+<h2>Hardening side</h2>
+<ul>
+<li>Deny-by-default ACLs; whitelist per-role per-model per-method.</li>
+<li>Force server-side tenant predicates - never trust filter[where] ownership keys from clients.</li>
+<li>Disable the explorer and verbose errors in production.</li>
+<li>Scope refresh tokens to an explicit allowlist of models.</li>
+</ul>
+<p>In our August 2026 scan of a production LoopBack deployment, all five probe classes came back properly denied - proof this checklist describes what mature teams actually defend. The client bundle alone exposed the full route map, which is why probe #0 starts at reading your own frontend.</p>
+<p><a href="index.html">pmkit home</a> | <a href="https://github.com/Pkaulsjs/pmkit">GitHub</a></p>
+</body></html>
