@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Polymarket API Without a Key - What You Can Do Read-Only (Python)</title>
+<meta name="description" content="Everything you can build on Polymarket's public APIs without any API key or wallet: market catalogs, order books, trade feeds, whale watching. Python examples, zero dependencies.">
+<link rel="canonical" href="https://pkaulsjs.github.io/pmkit/polymarket-api-without-key.html"></head>
+<body style="font-family:-apple-system,Segoe UI,sans-serif;max-width:760px;margin:2rem auto;padding:0 1.25rem;line-height:1.65">
+<h1>Polymarket API Without a Key</h1>
+<p>A surprising amount of Polymarket tooling needs <strong>zero credentials</strong>. Both public APIs serve anonymous traffic freely - no account, no wallet, no API key.</p>
+<h2>What works keyless</h2>
+<ul>
+<li><strong>Market catalog</strong> - every active/resolved market with outcomes and volumes: <code>GET gamma-api.polymarket.com/markets?active=true&amp;closed=false&amp;limit=100</code></li>
+<li><strong>Order books</strong> - full depth per outcome token: <code>GET clob.polymarket.com/book?token_id=...</code></li>
+<li><strong>Live streaming</strong> - WebSocket book events at <a href="websocket-python.html">wss://ws-subscriptions-clob.polymarket.com/ws/market</a></li>
+<li><strong>Trade feed</strong> - recent trades across all markets: <code>GET data-api.polymarket.com/trades?limit=100</code> (powers <a href="whale-tracker-python.html">whale tracking</a>)</li>
+</ul>
+<h2>What needs keys</h2>
+<p>Only order placement and user-specific data. Analysis, scanning, paper trading, monitoring - all keyless.</p>
+<h2>The one rule of keyless work</h2>
+<p>Be polite: modest request rates, cache what you can. The APIs are generous but not infinite; a scanner hammering them gets throttled and ruins it for everyone.</p>
+<p><a href="https://github.com/Pkaulsjs/pmkit">pmkit</a> wraps all four surfaces stdlib-only - see the <a href="gamma-api-python.html">Gamma guide</a> and <a href="clob-orderbook-python.html">CLOB guide</a>.</p>
+<p><a href="index.html">home</a></p>
+</body></html>
