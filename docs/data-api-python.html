@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Polymarket Data API in Python - Historical Market Data and Prices</title>
+<meta name="description" content="Fetch Polymarket market history and prices with Python: the Gamma API for markets and events, the CLOB API for real order books, and why midpoint prices lie. Stdlib-only code.">
+<link rel="canonical" href="https://pkaulsjs.github.io/pmkit/data-api-python.html"></head>
+<body style="font-family:-apple-system,Segoe UI,sans-serif;max-width:760px;margin:2rem auto;padding:0 1.25rem;line-height:1.65">
+<h1>Polymarket's Data APIs from Python</h1>
+<p>Polymarket has two public APIs and they answer different questions. Picking the wrong one is the most common mistake in Polymarket tooling:</p>
+<table border="1" cellpadding="6" style="border-collapse:collapse;font-size:.95em">
+<tr><th>API</th><th>Answers</th><th>Auth</th></tr>
+<tr><td>Gamma (<code>gamma-api.polymarket.com</code>)</td><td>What markets exist? What are their metadata, volumes, outcome prices?</td><td>None</td></tr>
+<tr><td>CLOB (<code>clob.polymarket.com</code>)</td><td>What can I actually trade at right now? (real bids/asks)</td><td>None (read-only)</td></tr>
+</table>
+<h2>Listing markets (Gamma)</h2>
+<pre>import json, urllib.request
+
+url = "https://gamma-api.polymarket.com/markets?limit=100&amp;active=true&amp;closed=false"
+markets = json.loads(urllib.request.urlopen(url, timeout=30).read())
+
+for m in markets[:3]:
+    print(m["question"][:60], m.get("volume24hr"))</pre>
+<h2>The midpoint trap</h2>
+<p>Gamma's <code>outcomePrices</code> are midpoints, not executable quotes. In a live scan of 2,100 binary markets we found zero cases where a midpoint-based "arb" survived contact with the actual CLOB book - apparent edges were phantom resting bids on dead markets or 4-share depth. Always validate against the book:</p>
+<pre>book = json.loads(urllib.request.urlopen(
+    "https://clob.polymarket.com/book?token_id=" + token_id, timeout=30).read())
+best_bid = max(book["bids"], key=lambda x: float(x["price"])) if book.get("bids") else None</pre>
+<h2>Pagination gotcha</h2>
+<p>Both APIs paginate with <code>offset</code>, but return HTTP 422 once you walk past the last page instead of an empty list. Treat 422 as end-of-data or your scanner crashes mid-run.</p>
+<p>Ready-made: <a href="https://github.com/Pkaulsjs/pmkit">pmkit</a> wraps both APIs with pagination handling, book validation, and scanners built on lessons from that scan.</p>
+<p><a href="gamma-api-python.html">Gamma API client &larr;</a> | <a href="clob-orderbook-python.html">CLOB order books</a> | <a href="index.html">pmkit home</a></p>
+
+<p><a style="display:inline-block;background:#0a8f4e;color:#fff;padding:.6rem 1rem;border-radius:8px;text-decoration:none;font-weight:600" href="https://prithish24.gumroad.com/l/fpwms">pmkit Pro - commercial license $49</a></p>
+</body></html>
